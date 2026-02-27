@@ -16,8 +16,6 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-      args:
-        VITE_BACKEND_URL: http://server:3200
     container_name: vite_client
     ports:
       - '3100:3100'
