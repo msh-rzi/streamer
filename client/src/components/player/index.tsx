@@ -34,7 +34,11 @@ function formatTime(totalSeconds: number) {
 export const StreamPlayer = forwardRef<StreamPlayerHandle, StreamPlayerProps>(
   function StreamPlayer({ backendUrl, className }, ref) {
     const resolvedBackendUrl =
-      backendUrl ?? import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:3200';
+      backendUrl ??
+      import.meta.env.VITE_BACKEND_URL ??
+      (typeof window !== 'undefined'
+        ? window.location.origin
+        : 'http://localhost:3200');
 
     const [isScrubbing, setIsScrubbing] = useState(false);
     const [scrubTime, setScrubTime] = useState<number | null>(null);

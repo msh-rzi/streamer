@@ -2,21 +2,25 @@ services:
   server:
     build:
       context: ./server
+      dockerfile: Dockerfile
+    container_name: nestjs_server
     ports:
       - '3200:3200'
     environment:
       PORT: 3200
-      VIDEO_PATH: /app/video.mp4
-    volumes:
-      - ./server/video.mp4:/app/video.mp4:ro
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/streaming_service
+      VIDEO_PATH: ./video.mp4
     restart: unless-stopped
 
   client:
     build:
       context: ./client
+      dockerfile: Dockerfile
+      args:
+        VITE_BACKEND_URL: http://server:3200
+    container_name: vite_client
     ports:
       - '3100:3100'
     depends_on:
       - server
     restart: unless-stopped
-

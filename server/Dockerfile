@@ -1,29 +1,25 @@
-FROM oven/bun:1-alpine AS build
+# Stage 1: Build
+FROM oven/bun:latest AS builder
 
 WORKDIR /app
 
-COPY package.json bun.lock ./
+COPY package.json bun.lockb ./
+RUN bun install --frozen-lockfile
 
-RUN bun install --frozen-lockfile --no-cache --cache-dir=/tmp/bun-cache \
-  && rm -rf /tmp/bun-cache
-
-COPY . .
+COPY . . 
 
 RUN bun run build
 
-FROM oven/bun:1-alpine AS runner
+# Stage 2: Production
+FROM oven/bun:latest
 
 WORKDIR /app
 
-ENV NODE_ENV=production
+COPY package.json bun.lockb ./
+RUN bun install --frozen-lockfile --production
 
-COPY package.json bun.lock ./
-
-RUN bun install --frozen-lockfile --production --no-cache --cache-dir=/tmp/bun-cache \
-  && rm -rf /tmp/bun-cache
-
-COPY --from=build /app/dist ./dist
+COPY --from=builder /app/dist ./dist
 
 EXPOSE 3200
 
-CMD ["bun", "dist/src/main.js"]
+CMD ["bun", "run", "dist/main.js"]
