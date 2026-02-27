@@ -12,6 +12,12 @@ services:
       VIDEO_PATH: ./video.mp4
     volumes:
       - ./server/video.mp4:/app/video.mp4
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.server.rule=Host(`apistream.mehdify.com`)'
+      - 'traefik.http.routers.server.entrypoints=websecure'
+      - 'traefik.http.routers.server.tls.certresolver=myresolver'
+      - 'traefik.http.services.server.loadbalancer.server.port=3200'
     restart: unless-stopped
 
   client:
