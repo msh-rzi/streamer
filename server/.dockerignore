@@ -1,6 +1,7 @@
 node_modules
 dist
 coverage
+.bun
 .env
 .env.*
 npm-debug.log*

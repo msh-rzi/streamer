@@ -1,0 +1,22 @@
+services:
+  server:
+    build:
+      context: ./server
+    ports:
+      - '3200:3200'
+    environment:
+      PORT: 3200
+      VIDEO_PATH: /app/video.mp4
+    volumes:
+      - ./server/video.mp4:/app/video.mp4:ro
+    restart: unless-stopped
+
+  client:
+    build:
+      context: ./client
+    ports:
+      - '3100:3100'
+    depends_on:
+      - server
+    restart: unless-stopped
+

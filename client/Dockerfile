@@ -1,11 +1,11 @@
-FROM node:22-alpine AS build
+FROM oven/bun:1-alpine AS build
 
 WORKDIR /app
 
-COPY package.json ./
-COPY bun.lock ./
+COPY package.json bun.lock ./
 
-RUN bun install
+RUN bun install --frozen-lockfile --no-cache --cache-dir=/tmp/bun-cache \
+  && rm -rf /tmp/bun-cache
 
 COPY . .
 
@@ -15,6 +15,6 @@ FROM nginx:alpine AS runner
 
 COPY --from=build /app/dist /usr/share/nginx/html
 
-EXPOSE 80
+EXPOSE 3100
 
 CMD ["nginx", "-g", "daemon off;"]
