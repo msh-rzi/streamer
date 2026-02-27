@@ -16,6 +16,8 @@ out/
 coverage/
 **/dist/
 **/build/
+**/video.mp4
+**/video-*.mp4
 
 ############################
 # Logs

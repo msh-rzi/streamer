@@ -1,14 +1,25 @@
 // stream.controller.ts
 import { Controller, Get, Req, Res } from '@nestjs/common';
 import { createReadStream, statSync } from 'fs';
+import { isAbsolute, resolve } from 'path';
 import type { Request, Response } from 'express';
 
 @Controller('video')
 export class StreamController {
   @Get()
   stream(@Req() req: Request, @Res() res: Response) {
-    const path = './video.mp4';
-    const stat = statSync(path);
+    const videoPath = process.env.VIDEO_PATH ?? 'video.mp4';
+    const resolvedVideoPath = isAbsolute(videoPath)
+      ? videoPath
+      : resolve(process.cwd(), videoPath);
+
+    let stat: ReturnType<typeof statSync>;
+    try {
+      stat = statSync(resolvedVideoPath);
+    } catch {
+      res.status(404).send('Video file not found.');
+      return;
+    }
 
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
@@ -23,7 +34,7 @@ export class StreamController {
         'Accept-Ranges': 'bytes',
       });
 
-      createReadStream(path).pipe(res);
+      createReadStream(resolvedVideoPath).pipe(res);
       return;
     }
 
@@ -80,6 +91,6 @@ export class StreamController {
       'Content-Type': 'video/mp4',
     });
 
-    createReadStream(path, { start, end }).pipe(res);
+    createReadStream(resolvedVideoPath, { start, end }).pipe(res);
   }
 }
