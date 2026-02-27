@@ -9,7 +9,7 @@ RUN bun install --frozen-lockfile
 COPY . .
 
 ARG VITE_BACKEND_URL
-ENV VITE_BACKEND_URL=http://187.124.12.194:3200
+ENV VITE_BACKEND_URL=https://apistream.mehdify.com
 
 RUN bun run build
 
