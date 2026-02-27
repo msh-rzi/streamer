@@ -4,12 +4,14 @@ services:
       context: ./server
       dockerfile: Dockerfile
     container_name: nestjs_server
-    ports:
-      - '3200:3200'
+    networks:
+      - web
     environment:
       PORT: 3200
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/streaming_service
       VIDEO_PATH: ./video.mp4
+    volumes:
+      - ./server/video.mp4:/app/video.mp4
     restart: unless-stopped
 
   client:
@@ -17,8 +19,18 @@ services:
       context: ./client
       dockerfile: Dockerfile
     container_name: vite_client
-    ports:
-      - '3100:3100'
+    networks:
+      - web
     depends_on:
       - server
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.client.rule=Host(`stream.mehdify.com`)'
+      - 'traefik.http.routers.client.entrypoints=websecure'
+      - 'traefik.http.routers.client.tls.certresolver=myresolver'
+      - 'traefik.http.services.client.loadbalancer.server.port=3100'
     restart: unless-stopped
+
+networks:
+  web:
+    external: true

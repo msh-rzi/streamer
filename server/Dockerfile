@@ -22,4 +22,4 @@ COPY --from=builder /app/dist ./dist
 
 EXPOSE 3200
 
-CMD ["bun", "run", "dist/main.js"]
+CMD ["bun", "run", "dist/src/main.js"]
