@@ -5,11 +5,11 @@ WORKDIR /app
 COPY package.json ./
 COPY bun.lock ./
 
-RUN npm install
+RUN bun install
 
 COPY . .
 
-RUN npm run build
+RUN bun run build
 
 FROM node:22-alpine AS runner
 
@@ -20,7 +20,7 @@ ENV NODE_ENV=production
 COPY package.json ./
 COPY bun.lock ./
 
-RUN npm install --omit=dev
+RUN bun install --omit=dev
 
 COPY --from=build /app/dist ./dist
 

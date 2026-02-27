@@ -5,11 +5,11 @@ WORKDIR /app
 COPY package.json ./
 COPY bun.lock ./
 
-RUN npm install
+RUN bun install
 
 COPY . .
 
-RUN npm run build
+RUN bun run build
 
 FROM nginx:alpine AS runner
 
